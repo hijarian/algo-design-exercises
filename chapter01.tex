@@ -353,4 +353,36 @@
 
 Таким образом, этот алгоритм действительно сортирует массивы любой длины.
 
+\subsection{Математическая индукция}
+
+\subsubsection{\#10}
+
+\textbf{Условие.}
+Докажите, что:
+
+\begin{equation}
+    \sum_{i=1}^ni=\frac{n(n+1)}{2}
+\end{equation}
+
+для \(n \geqslant 0\).
+
+По индукции, пусть \(n=1\):
+\begin{eqnarray}
+    1 &=& \frac{1\times(1 + 1)}{2}\\
+    1 &=& \frac{1 \times 2}{2}\\
+    1 &=& 1
+\end{eqnarray}
+
+Пусть верно для \(n\).
+Вычислим для \(n+1\):
+
+\begin{eqnarray}
+    1 + 2 + \ldots + n + (n + 1) &=& \frac{(n+1)(n+2)}{2}\\
+    \frac{n(n+1)}{2} + n + 1 &=& \frac{(n+1)(n+2)}{2}\\
+    n(n + 1) + 2n + 2 = (n + 1)(n + 2)\\
+    n^2 + n + 2n + 2 = n^2 + n + 2n + 2
+\end{eqnarray}
+
+Что и требовалось доказать.
+
 \end{document}
