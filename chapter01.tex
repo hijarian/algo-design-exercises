@@ -1,4 +1,4 @@
-% chktex-file 19
+% chktex-file 19 chktex-file 1
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T2A]{fontenc}
@@ -6,7 +6,10 @@
 
 \usepackage{amsmath}
 \usepackage{tikz}
-        
+\usepackage{amssymb}
+\usepackage{algpseudocode}
+\usepackage{listingsutf8}
+
 \begin{document}
 
 \section{Глава 1}
@@ -155,5 +158,199 @@
 но жадный алгоритм вначале выберет \(S_1\) как самое мощное подмножество,
 а потом не останется ничего другого, как добавлять все остальные подмножества,
 то есть, в итоге алгоритм выберет все исходные подмножества в качестве результата работы, \(T = S\).
+
+\subsection{Доказательство правильности}
+
+\subsubsection{\#7}
+
+\textbf{Условие.}
+Докажите правильность следующего рекурсивного алгоритма умножения двух натуральных чисел
+для всех целочисленных констант \(c \geqslant 2\):
+
+\begin{algorithmic}[1]
+\Function{multiply}{$y,z$}
+    \If{$z = 0$}
+        \State \Return $0$
+    \Else
+        \State \Return $multiply(cy, \lfloor z/c \rfloor) + y * (z \mod c)$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+    
+Вычислим результат работы multiply на каком-нибудь простом примере:
+
+\begin{eqnarray}
+&&c = 2, y = 2, z = 3 \\
+&  & multiply(2, 3) \\
+&= & multiply(2*2, \lfloor 3/2 \rfloor) + 2 * (3 \mod 2) \\
+&= & multiply(4, 1) + 2 * 1 \\
+&= & multiply(4, 1) + 2 \\
+&= & multiply(4 * 2, \lfloor 1 /2 \rfloor) + 4 * (1 \mod 2) + 2 \\
+&= & multiply(8, 0) + 4 * 1 + 2 \\
+&= & 0 + 4 + 2 \\
+&= & 6
+\end{eqnarray}
+
+Пусть $z = 0$.
+Тогда $multiply(y, z) = 0$.
+
+Допустим теперь, что алгоритм правильный, то есть \(multiply(y, z) = yz\) при:
+
+\begin{eqnarray}
+    z \leqslant n\\
+    y \geqslant 1\\
+    c \geqslant 2
+\end{eqnarray}
+
+Теперь докажем, что \(multiply(y, n+1) = y(n+1)\).
+
+\begin{eqnarray}
+    &&mutiply(y, n+1) =\\
+    &&multiply(y * c, \lfloor \frac{n+1}{c} \rfloor) + y * ((n+1) \mod c) =\\
+    &&y*c*\lfloor \frac{n+1}{c} \rfloor + y*((n+1) \mod c) =\\
+    &&y*(c * \lfloor \frac{n+1}{c} \rfloor + (n+1) \mod c) \label{FinalEquationBeforeSimplification}
+\end{eqnarray}
+
+Теперь докажем, что \(c * \lfloor \frac{n+1}{c} \rfloor + (n+1) \mod c) = n+1\).
+
+\begin{eqnarray}
+    &&n+1 \equiv z \\
+    &&c\lfloor \frac{z}{c} \rfloor + z \mod c = z \label{RestoringDivision}
+\end{eqnarray}
+
+\(z/c\) в случае деления произвольных натуральных чисел --- операция с остатком.
+\(\lfloor z/c \rfloor\) же избавляется от этого остатка.
+
+В то же время, \(z \mod c\) это операция получения \textit{остатка от деления} \(z\) на \(c\).
+
+Формула \eqref{RestoringDivision} может использоваться как есть,
+потому что следует из определения операций, которые в ней используются.
+
+Если мы умножим \(c\) на операцию, убирающую остаток от деления \(z\) на \(c\),
+то получим как бы <<восстановленную>> \(z\) без остатка после деления.
+
+\begin{equation}
+    3 \times \lfloor \frac{10}{3} \rfloor = 3 \times 3 = 9
+\end{equation}
+
+Но если мы потом прибавим буквально остаток от этого же деления, мы получим исходное число!
+
+\begin{equation}
+    10 \mod 3 = 1
+\end{equation}
+
+А \(9 + 1 = 10\), как и следует из объяснения выше.
+
+Таким образом, из \eqref{RestoringDivision} и \eqref{FinalEquationBeforeSimplification} следует:
+
+\begin{eqnarray}
+    && y \times (c \times \lfloor \frac{n+1}{c} \rfloor + (n+1) \mod c) = y \times (n + 1)\\
+    && \Rightarrow multiply(y, n+1) = y \times (n + 1)
+\end{eqnarray}
+
+Что и требовалось доказать.
+
+\subsubsection{\#8}
+
+\textbf{Условие.}
+Докажите правильность следующего алгоритма вычисления полинома \(P(x) = a_nx^n + a_{n-1}x^{n-1} + \ldots + a_1x^ + a_0\):
+
+\begin{algorithmic}[1]
+    \Function{horner}{$A,x$}
+        \State $p = A_n$
+        \For{$i \gets n-1, 0$}
+            \State $p = p \times x + A_i$
+        \EndFor
+        \State \Return $p$
+    \EndFunction
+\end{algorithmic}
+
+Пусть \(n = 0\).
+Тогда цикл не выполнится ни разу и результатом будет \(A_0\).
+
+Пусть \(n = 1\).
+Тогда:
+
+\begin{eqnarray}
+    &&p = A_1\\
+    &i = 0: &p = A_1 \times x + A_0
+\end{eqnarray}
+
+Пусть \(n = 2\).
+Тогда:
+
+\begin{eqnarray}
+    &&p = A_2\\
+    &i = 1: &p = A_2 \times x + A_1\\
+    &i = 0: &p = (A_2 \times x + A_1) \times x + A_0 = A_2 \times x^2 + A_1 \times x + A_0
+\end{eqnarray}
+
+Допустим, что алгоритм правильный при любых \(n\).
+Посмотрим, что происходит при \(n+1\):
+
+\begin{eqnarray}
+    &&p = A_{n+1}\\
+    &i = n: &p = A_{n+1} \times x + A_{n}\\
+    &i = n-1: &p = (A_{n+1} \times x + A_{n}) \times x + A_{n-1}\\
+    & \ldots &\\
+    &i = n-n = 0: &p = A_{n+1}x^{n+1} + A_nx^n + A_{n-1}x^{n-1} + \ldots + A_{n-n}
+\end{eqnarray}
+
+Что и требовалось доказать.
+
+\subsubsection{\#9}
+
+\textbf{Условие.}
+Докажите правильность следующего алгоритма сортировки:
+
+\begin{lstlisting}
+    function bubblesort(A: list[1...n])
+        var int i,j
+        for i from n to 1
+            for j from 1 to i - 1
+                if (A[j] > A[j+1])
+                    swap A[j] and A[j + 1]
+\end{lstlisting}
+
+Пусть \(n = 2\).
+Тогда:
+
+\begin{eqnarray}
+    &i = 2, j = 1:& A[1] > A[2] ? swap : keep
+\end{eqnarray}
+
+Пусть алгоритм может отсортировать любой массив длиной \(n\).
+Может ли он отсортировать массив длиной \(n+1\)?
+
+Передача в этот алгоритм массив длиной \(n+1\) эквивалентна замене его на следующий код:
+
+\begin{lstlisting}
+    function bubblesort(A: list[1...n+1])
+        var int i,j
+        for j from 1 to n + 1 - 1
+            if (A[j] > A[j + 1])
+                swap A[j] and A[j + 1]
+        for i from n to 1
+            for j from 1 to i - 1
+                if (A[j] > A[j+1])
+                    swap A[j] and A[j + 1]        
+\end{lstlisting}
+
+По индукции мы допустили, что основная пара вложенных циклов действительно отсортирует
+все элементы от 1 до \(n\).
+
+Мы же добавили в код ещё один цикл:
+
+\begin{lstlisting}
+    for j from 1 to n
+        if (A[j] > A[j + 1])
+            swap A[j] and A[j + 1]
+\end{lstlisting}
+
+Этот цикл проверит два новых элемента: \texttt{A[n]} и \texttt{A[n+1]}, последние в списке.
+Элемент \texttt{A[n+1]} идёт после отсортированных элементов \texttt{A[1] ... A[n]}.
+Если они не в правильном порядке, он их поменяет местами, в точности как случай когда \(n = 2\).
+
+Таким образом, этот алгоритм действительно сортирует массивы любой длины.
 
 \end{document}
